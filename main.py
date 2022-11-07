@@ -17,6 +17,7 @@ if __name__ == '__main__':
     myFont = ImageFont.truetype(FONT, 400)
     
     # Add Text to an image
+    # Source to look at: https://levelup.gitconnected.com/how-to-properly-calculate-text-size-in-pil-images-17a2cc6f51fd
     print(f'{img.width} {img.height}')
     I1.text((int(img.width * 0.005), int(img.height * 0.7)), "HBD NICK!", fill=(255, 255, 255), font=myFont)
     
