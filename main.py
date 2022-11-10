@@ -51,7 +51,7 @@ if __name__ == '__main__':
     
     img = Image.open('processed_images/block.png')
     img = np.array(img)
-    img = ImageClip('processed_images/block.png').set_duration(5)
+    img = ImageClip('processed_images/block.png')
     clip = concatenate([clip, img.set_start(clip.duration).set_duration(5)], method='compose')
     clip.write_videofile('sup.mp4', threads=16, codec="h264_nvenc", verbose=False, logger=None)
     print("Epic.")
