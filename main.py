@@ -2,6 +2,7 @@ from moviepy.editor import *
 from PIL import Image
 from PIL import ImageDraw, ImageFont
 import PIL
+import numpy as np
 import os
 
 FONT = 'open-sans/OpenSans-Regular.ttf'
@@ -46,6 +47,11 @@ if __name__ == '__main__':
         
         img.save("processed_images/" + image)
         print(image)
-    # clip = VideoFileClip('videos/sample.mp4').rotate(180)
-    # clip.write_videofile('sup.mp4', threads=16, codec="h264", verbose=False, logger=None)
+    clip = VideoFileClip('videos/sample.mp4').rotate(180)
+    
+    img = Image.open('processed_images/block.png')
+    img = np.array(img)
+    img = ImageClip('processed_images/block.png').set_duration(5)
+    clip = concatenate([clip, img.set_start(clip.duration).set_duration(5)], method='compose')
+    clip.write_videofile('sup.mp4', threads=16, codec="h264_nvenc", verbose=False, logger=None)
     print("Epic.")
