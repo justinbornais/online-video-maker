@@ -14,12 +14,20 @@ if __name__ == '__main__':
     I1 = ImageDraw.Draw(img)
 
     # Custom font style and font size
-    myFont = ImageFont.truetype(FONT, 400)
+    fontsize = 1
+    myFont = ImageFont.truetype(FONT, fontsize)
+    txt = 'sup'
     
     # Add Text to an image
     # Source to look at: https://levelup.gitconnected.com/how-to-properly-calculate-text-size-in-pil-images-17a2cc6f51fd
-    print(f'{img.width} {img.height}')
-    I1.text((int(img.width * 0.005), int(img.height * 0.7)), "HBD NICK!", fill=(255, 255, 255), font=myFont)
+    #print(f'{myFont.getsize(txt)[0]} {myFont.getsize(txt)[1] }')
+    
+    while myFont.getsize(txt)[0] < img.width:
+        # iterate until the text size is just larger than the criteria
+        fontsize += 1
+        myFont = ImageFont.truetype(FONT, fontsize)
+    
+    I1.text((int(img.width * 0.005), int(img.height - myFont.getsize(txt)[1])), txt, fill=(255, 255, 255), font=myFont)
     
     # Display edited image
     img.show()
