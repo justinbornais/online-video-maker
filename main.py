@@ -39,10 +39,7 @@ if __name__ == '__main__':
         #img.show()
         
         # Save the edited image
-        end = ''
-        if '.png' in image: end = '.png'
-        elif '.jpg' in image:
-            end = '.jpg'
+        if image.endswith('.jpg'):
             img = img.convert('RGB')
         
         img.save("processed_images/" + image)
