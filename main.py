@@ -7,6 +7,8 @@ import numpy as np
 import os
 
 FONT = 'open-sans/OpenSans-Regular.ttf'
+WIDTH = 1280
+HEIGHT = 720
 
 def add_margin(pil_img, top, right, bottom, left, color):
     width, height = pil_img.size
@@ -26,11 +28,22 @@ if __name__ == '__main__':
     total_length = 0
     for a in audios: total_length += a.duration # Get the total video length from the length of all the audio files.
     
+    first_length = 0
+    second_length = 0
+    
+    length_per_clip = 0
+    if first_length != 0 and second_length != 0: length_per_clip = total_length / (len(file_list) - 2)
+    elif first_length != 0 or second_length != 0: length_per_clip = total_length / (len(file_list) - 1)
+    else: length_per_clip = total_length / len(file_list)
+    
+    print(f"{total_length} - {length_per_clip}")
+    
+    
     for image in file_list:
         
-        # Open an Image and immediately scale it to 1080p.
+        # Open an Image and immediately scale it to the proper resolution.
         img = Image.open('images/' + image)
-        multiplier = min(1920/img.width, 1080/img.height)
+        multiplier = min(WIDTH/img.width, HEIGHT/img.height)
         img = img.resize((int(img.width * multiplier), int(img.height * multiplier)), PIL.Image.LANCZOS)
         
         # Call draw Method to add 2D graphics in an image
@@ -48,10 +61,10 @@ if __name__ == '__main__':
         
         I1.text((int(img.width * 0.005), int(img.height - myFont.getsize(txt)[1])), txt, fill=(255, 255, 255), font=myFont)
         
-        if img.width < 1920:
-            img = add_margin(img, 0, ceil((1920 - img.width) / 2), 0, floor((1920 - img.width) / 2), (0, 0, 0))
-        elif img.height < 1080:
-            img = add_margin(img, ceil((1080 - img.height) / 2), 0, floor((1080 - img.height) / 2), 0, (0, 0, 0))
+        if img.width < WIDTH:
+            img = add_margin(img, 0, ceil((WIDTH - img.width) / 2), 0, floor((WIDTH - img.width) / 2), (0, 0, 0))
+        elif img.height < HEIGHT:
+            img = add_margin(img, ceil((HEIGHT - img.height) / 2), 0, floor((HEIGHT - img.height) / 2), 0, (0, 0, 0))
         
         # Display edited image
         #img.show()
@@ -68,7 +81,14 @@ if __name__ == '__main__':
     
     img = ImageClip('processed_images/block.png')
     #clip = concatenate([clip, img.set_start(clip.duration).set_duration(5)], method='compose')
-    clip = concatenate([img.set_start(0).set_duration(5)], method='compose')
-    clip.fps = 30
-    clip.write_videofile('sup.mp4',  threads=16, codec="h264_nvenc", verbose=False, logger=None)
+    
+    clip = None
+    for i in imgs:
+        if clip == None:
+            clip = concatenate([i.set_start(0).set_duration(length_per_clip)], method='compose')
+            continue
+        clip = concatenate([clip, i.set_start(clip.duration).set_duration(length_per_clip)], method='compose')
+    
+    clip.fps = 24
+    clip.write_videofile('sup2.mp4',  threads=16, codec="h264_nvenc", verbose=False)#, logger=None)
     print(f'Video created: Size = {clip.size}')
